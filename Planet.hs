@@ -28,7 +28,7 @@ orbitalAngle p
 
 logDriftedPlanet :: Planet -> Writer [String] Planet
 logDriftedPlanet p = writer (p, [state])
-  where stp = show $ step p
+  where stp = step p
         t = time p
         dt_ = dt p
         (x0, x1) = pos p
@@ -36,7 +36,8 @@ logDriftedPlanet p = writer (p, [state])
         (a0, a1) = acc p
         v0drift = v0 + 0.5*a0*dt_
         v1drift = v1 + 0.5*a1*dt_
-        state = show t ++ "\t" ++ show dt_ ++ "\t" ++ show x0 ++ "\t"
+        state = show stp ++ "\t" ++ show t ++ "\t" ++ show dt_ ++ "\t"
+             ++ show x0 ++ "\t"
              ++ show x1 ++ "\t" ++ show v0drift ++ "\t" ++ show v1drift ++ "\t"
              ++ show a0 ++ "\t" ++ show a1 ++ "\t"
 

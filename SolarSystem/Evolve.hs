@@ -16,12 +16,20 @@ calcDt p = etaTimeStep * min (1.0 / abs v) (1.0 / abs a)
   where v = magnitude $ vel p
         a = magnitude $ acc p
 
-evolveSystem :: Double -> Double -> Double -> [Planet] -> Writer [String] [Planet]
-evolveSystem tMax t dt ps
-  | t >= tMax     = tell ["time = " ++ show t] >> return ps  --writer (ps, ["Done with simulation"])
-  | t == 0.0      = tell ["time = " ++ show t] >> evolveSystem tMax (t+dt) dt (startSystem ps)
-  | t + dt > tMax = tell ["time = " ++ show t] >> evolveSystem tMax t (tMax-t) ps
-  | otherwise     = tell ["time = " ++ show t] >> evolveSystem tMax (t+dt) dt (map (evolvePlanet (t+dt)) ps)
+evolveSystem :: Int -> Double -> Double -> Double -> [Planet] -> Writer [String] [Planet]
+evolveSystem step tMax t dt ps
+  | t >= tMax     = logSystem step t dt ps >> return ps
+  | t == 0.0      = logConfig (length ps) >> logSystem step t dt ps >> evolveSystem step tMax (t+dt) dt (startSystem ps)
+  | t + dt > tMax = evolveSystem step tMax t (tMax-t) ps
+  | otherwise     = logSystem step t dt ps >> evolveSystem (step+1) tMax (t+dt) dt (map (evolvePlanet (t+dt)) ps)
+
+logConfig numPlanets = tell [show numPlanets]
+
+
+logGlobal step time delta = tell [ show step ++ "\t" ++ show time ++ "\t"
+                                     ++ show delta ]
+
+logSystem step time delta ps = logGlobal step time delta >> logPlanets ps
 
 startSystem []     = []
 startSystem (p:ps) = newP : startSystem ps

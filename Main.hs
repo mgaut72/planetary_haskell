@@ -9,4 +9,4 @@ main = do
   putStr $ unlines $ log
 
 
-runSystem = evolveSystem 1 0.0 globalDt planets
+runSystem = evolveSystem 0 1 0.0 globalDt planets
