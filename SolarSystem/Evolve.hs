@@ -18,10 +18,10 @@ calcDt p = etaTimeStep * min (1.0 / abs v) (1.0 / abs a)
 
 evolveSystem :: Double -> Double -> Double -> [Planet] -> Writer [String] [Planet]
 evolveSystem tMax t dt ps
-  | t >= tMax     = tell ["done"] >> return ps  --writer (ps, ["Done with simulation"])
-  | t == 0.0      = tell ["start simulation"] >> evolveSystem tMax (t+dt) dt (startSystem ps)
-  | t + dt > tMax = tell ["time step too large"] >> evolveSystem tMax t (tMax-t) ps
-  | otherwise     = tell ["taking normal step"] >> evolveSystem tMax (t+dt) dt (map (evolvePlanet (t+dt)) ps)
+  | t >= tMax     = tell ["time = " ++ show t] >> return ps  --writer (ps, ["Done with simulation"])
+  | t == 0.0      = tell ["time = " ++ show t] >> evolveSystem tMax (t+dt) dt (startSystem ps)
+  | t + dt > tMax = tell ["time = " ++ show t] >> evolveSystem tMax t (tMax-t) ps
+  | otherwise     = tell ["time = " ++ show t] >> evolveSystem tMax (t+dt) dt (map (evolvePlanet (t+dt)) ps)
 
 startSystem []     = []
 startSystem (p:ps) = newP : startSystem ps
