@@ -7,7 +7,7 @@ xHalfStep :: Double -> Double -> Double -> Double
 xHalfStep x v dt = x + 0.5*v*dt
 
 xFullStep :: Double -> Double -> Double -> Double
-xFullStep x v dt = x + 0.5*v*dt
+xFullStep x v dt = x + v*dt
 
 vFullStep :: Double -> Double -> Double -> Double
 vFullStep v a dt = v + a*dt
