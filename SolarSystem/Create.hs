@@ -3,8 +3,8 @@ import Planet
 import SolarSystem.Gravity
 import SolarSystem.Evolve
 
-au_in_km :: Double
-au_in_km = 1.495979e8
+auInKm :: Double
+auInKm = 1.495979e8
 
 createPlanet :: Double -> Double -> Planet
 createPlanet a e = initDt . updateAcc . initVelocity $ p
@@ -17,12 +17,12 @@ createPlanet a e = initDt . updateAcc . initVelocity $ p
                    , sma = a
                    , step = 0
                    }
-        initVelocity p = p { vel = (0.0,  (circularVelocity p)*sqrt(1+e)) }
+        initVelocity p = p { vel = (0.0,  circularVelocity p * sqrt $ 1 + e) }
         initDt p = p { dt = calcDt p }
 
-mercury = createPlanet (57909227.0 / au_in_km) 0.20563593
+mercury = createPlanet (57909227.0 / auInKm) 0.20563593
 
-venus = createPlanet (108209475.0 / au_in_km) 0.00677672
+venus = createPlanet (108209475.0 / auInKm) 0.00677672
 
 earth = createPlanet 1.0 0.01671123
 

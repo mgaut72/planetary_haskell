@@ -18,7 +18,7 @@ data Planet = Planet { pos :: Position         -- AU
                      } deriving (Show)
 
 orbitalRadius :: Planet -> Double
-orbitalRadius p = magnitude $ pos p
+orbitalRadius = magnitude pos
 
 orbitalAngle :: Planet -> Double
 orbitalAngle p
@@ -37,14 +37,12 @@ logDriftedPlanet p = writer (p, [state])
         (a0, a1) = acc p
         v0drift = v0 + 0.5*a0*dt_
         v1drift = v1 + 0.5*a1*dt_
-        -- state = show stp ++ "\t" ++ show x0 ++ "\t" ++ show x1
         state = printf "%d\t" stp
              ++ printIt t ++ printIt dt_
              ++ printIt x0 ++ printIt x1
              ++ printIt v0drift ++ printIt v1drift
              ++ printIt a0 ++ printIt a1
-
-printIt x = printf "%.6f\t" x
+        printIt = printf "%.6f\t"
 
 logPlanets :: [Planet] -> Writer [String] [Planet]
 logPlanets = mapM logDriftedPlanet
