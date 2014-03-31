@@ -1,6 +1,7 @@
 module Planet where
 import Util
 import Control.Monad.Writer
+import Text.Printf
 
 type Position = (Double, Double)
 type Velocity = (Double, Double)
@@ -36,10 +37,14 @@ logDriftedPlanet p = writer (p, [state])
         (a0, a1) = acc p
         v0drift = v0 + 0.5*a0*dt_
         v1drift = v1 + 0.5*a1*dt_
-        state = show stp ++ "\t" ++ show t ++ "\t" ++ show dt_ ++ "\t"
-             ++ show x0 ++ "\t"
-             ++ show x1 ++ "\t" ++ show v0drift ++ "\t" ++ show v1drift ++ "\t"
-             ++ show a0 ++ "\t" ++ show a1 ++ "\t"
+        -- state = show stp ++ "\t" ++ show x0 ++ "\t" ++ show x1
+        state = printf "%d\t" stp
+             ++ printIt t ++ printIt dt_
+             ++ printIt x0 ++ printIt x1
+             ++ printIt v0drift ++ printIt v1drift
+             ++ printIt a0 ++ printIt a1
+
+printIt x = printf "%.6f\t" x
 
 logPlanets :: [Planet] -> Writer [String] [Planet]
 logPlanets = mapM logDriftedPlanet
