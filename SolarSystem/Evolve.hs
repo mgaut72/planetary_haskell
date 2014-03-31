@@ -4,6 +4,7 @@ import Planet
 import Util
 import LeapFrog
 import SolarSystem.Gravity
+import Text.Printf
 
 etaTimeStep :: Double
 etaTimeStep = 0.0004
@@ -12,41 +13,38 @@ globalDt :: Double
 globalDt = 0.5 / 365.25
 
 calcDt :: Planet -> Double
-calcDt p = etaTimeStep * min (1.0 / abs v) (1.0 / abs a)
+calcDt p = etaTimeStep * min (1.0 / abs v) (1.0 / (sqrt $ abs a))
   where v = magnitude $ vel p
         a = magnitude $ acc p
 
 evolveSystem :: Int -> Double -> Double -> Double -> [Planet] -> Writer [String] [Planet]
 evolveSystem step tMax t dt ps
   | t >= tMax     = logSystem step t dt ps >> return ps
-  | t == 0.0      = logConfig (length ps) >> logSystem step t dt ps >> evolveSystem step tMax (t+dt) dt (startSystem ps)
   | t + dt > tMax = evolveSystem step tMax t (tMax-t) ps
   | otherwise     = logSystem step t dt ps >> evolveSystem (step+1) tMax (t+dt) dt (map (evolvePlanet (t+dt)) ps)
 
 logConfig numPlanets = tell [show numPlanets]
 
-
-logGlobal step time delta = tell [ show step ++ "\t" ++ show time ++ "\t"
-                                     ++ show delta ]
+logGlobal step time delta = tell [ printf "%d\t" step ++ printf "%.6f\t" time
+                                ++ printf "%.6f\t" delta ]
 
 logSystem step time delta ps = logGlobal step time delta >> logPlanets ps
 
-startSystem []     = []
-startSystem (p:ps) = newP : startSystem ps
+firstStep p = newP
   where (x0, x1) = pos p
         (v0, v1) = vel p
         (a0, a1) = acc p
-        t = time p
         x0new = xFirstStep x0 v0 a0 (dt p)
         x1new = xFirstStep x1 v1 a1 (dt p)
-        pIntermetiate = p { pos = (x0new, x1new)
-                          , time = t + 0.5*(dt p)
-                          , dt = calcDt p
-                          }
-        newP = updateAcc pIntermetiate
+        pIntermetiate = p { pos = (x0new, x1new) }
+        newP = (\p -> p {time = (time p) + 0.5*(dt p) }) . (\p -> p { dt = calcDt p}) . updateAcc $ pIntermetiate
 
-evolvePlanet tEnd p = evolveCount . evolveTime . updateAcc
-                      . evolvePos . evolveVel . adjustDt tEnd $ p
+evolvePlanet tEnd p
+  | time p == 0.0 = evolvePlanet tEnd $ firstStep p
+  | time p < tEnd = evolvePlanet tEnd
+                    ( evolveCount . evolveTime . updateAcc
+                    . evolvePos . evolveVel . adjustDt tEnd $ p)
+  | otherwise = p
 
 -- check if this planets timestep exceeds global timestep
 adjustDt tEnd p
