@@ -1,3 +1,9 @@
 #! /bin/bash
 
-./Main > Visualization/out.txt
+if [[ -z "$1" ]]
+then
+    ./Main > Visualization/out.txt
+elif [[ "$1" == "profile" ]]
+then
+    ./Main +RTS -p > /dev/null
+fi
