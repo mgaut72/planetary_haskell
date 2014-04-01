@@ -17,7 +17,7 @@ createPlanet a e = initDt . updateAcc . initVelocity $ p
                    , sma = a
                    , step = 0
                    }
-        initVelocity p = p { vel = (0.0,  circularVelocity p * sqrt $ 1 + e) }
+        initVelocity p = p { vel = (0.0,  circularVelocity p * sqrt (1 + e)) }
         initDt p = p { dt = calcDt p }
 
 mercury = createPlanet (57909227.0 / auInKm) 0.20563593

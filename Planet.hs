@@ -18,7 +18,7 @@ data Planet = Planet { pos :: Position         -- AU
                      } deriving (Show)
 
 orbitalRadius :: Planet -> Double
-orbitalRadius = magnitude pos
+orbitalRadius p = magnitude $ pos p
 
 orbitalAngle :: Planet -> Double
 orbitalAngle p
