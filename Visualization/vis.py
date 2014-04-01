@@ -1,13 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib import animation
 import matplotlib
-import numpy as np
 import sys
-import time
-from matplotlib import rcParams
-rcParams.update({'figure.autolayout': True})
-
-from matplotlib.backends.backend_pdf import PdfPages
 
 def readData():
 
@@ -17,7 +11,7 @@ def readData():
             break
 
         parts = line.split()
-        data = [float(x) for x in parts[1:]]
+        data = [float(x) for x in parts]
         global_data.append(data)
 
 
@@ -45,32 +39,35 @@ earth_data = []
 
 readData()
 fig = plt.figure()
-ax = fig.add_subplot(1,1,1, xlim=(-1.1, 1.1), ylim=(-1.1, 1.1), aspect='equal', axisbg = 'black')
+ax = fig.add_subplot(1,1,1, xlim=(-1.3, 1.3), ylim=(-1.3, 1.3), aspect='equal', axisbg = 'black')
 
 sun = plt.Circle((-5,-5), radius = 0.1, color='yellow')
 mercury = plt.Circle((-5,-5), radius = 0.01, color = 'white')
 venus = plt.Circle((-5,-5), radius = 0.03, color = 'red')
 earth = plt.Circle((-5,-5), radius = 0.04, color = 'blue')
+global_step = ax.text(0.05, 0.95, "", transform=ax.transAxes, color='white')
+time = ax.text(0.55, 0.95, "", transform=ax.transAxes, color='white')
 
 x = 3
 y = 4
 
 def init():
     sun.center = (0, 0)
-    #mercury.center = (mercury_data[0][x], mercury_data[0][y])
-    #venus.center = (venus_data[0][x], venus_data[0][y])
-    #earth.center = (earth_data[0][x], earth_data[0][y])
+    global_step.set_text("")
+    time.set_text("")
     ax.add_artist(sun)
     ax.add_artist(mercury)
     ax.add_artist(venus)
     ax.add_artist(earth)
-    return sun, mercury, venus, earth,
+    return mercury, venus, earth, global_step, time
 
 def animate(i):
+    global_step.set_text("step = %d"  % int(global_data[i][0]))
+    time.set_text("time = %d earth days"  % int(global_data[i][1] * 365.25))
     mercury.center = (mercury_data[i][x], mercury_data[i][y])
     venus.center = (venus_data[i][x], venus_data[i][y])
     earth.center = (earth_data[i][x], earth_data[i][y])
-    return sun, mercury, venus, earth,
+    return mercury, venus, earth, global_step, time
 
 
 anim = animation.FuncAnimation(fig, animate, frames=len(global_data), init_func=init,
