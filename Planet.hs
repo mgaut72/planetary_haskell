@@ -37,12 +37,8 @@ logDriftedPlanet p = writer (p, [state])
         (a0, a1) = acc p
         v0drift = v0 + 0.5*a0*dt_
         v1drift = v1 + 0.5*a1*dt_
-        state = printf "%d\t" stp
-             ++ printIt t ++ printIt dt_
-             ++ printIt x0 ++ printIt x1
-             ++ printIt v0drift ++ printIt v1drift
-             ++ printIt a0 ++ printIt a1
-        printIt = printf "%.6f\t"
+        state = printf "%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f"
+                       stp t dt_ x0 x1 v0drift v1drift a0 a1
 
 logPlanets :: [Planet] -> Writer [String] [Planet]
 logPlanets = mapM logDriftedPlanet
