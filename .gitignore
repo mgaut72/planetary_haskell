@@ -2,5 +2,4 @@
 *.hi
 *.o
 Main
-out.txt
 *.prof
